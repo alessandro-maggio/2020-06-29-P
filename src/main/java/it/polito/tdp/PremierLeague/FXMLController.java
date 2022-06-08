@@ -8,6 +8,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.PremierLeague.model.Match;
+import it.polito.tdp.PremierLeague.model.Mese;
 import it.polito.tdp.PremierLeague.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,13 +42,13 @@ public class FXMLController {
     private TextField txtMinuti; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMese"
-    private ComboBox<?> cmbMese; // Value injected by FXMLLoader
+    private ComboBox<Mese> cmbMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM1"
-    private ComboBox<?> cmbM1; // Value injected by FXMLLoader
+    private ComboBox<Match> cmbM1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbM2"
-    private ComboBox<?> cmbM2; // Value injected by FXMLLoader
+    private ComboBox<Match> cmbM2; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -53,15 +56,70 @@ public class FXMLController {
     @FXML
     void doConnessioneMassima(ActionEvent event) {
     	
+    	
+    	
+    	try {
+    		doCreaGrafo(event);
+    		String s= this.model.connessioneMax(Integer.parseInt(txtMinuti.getText()));
+    		txtResult.clear();
+        	txtResult.appendText(s);
+    		
+			
+		} catch (NumberFormatException e) {
+			txtResult.clear();
+    		txtResult.appendText("Inserire un numero MIN valido!\n");
+		}
+    	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+    	try {
+    		
+    		if(cmbMese.getValue()==null) {
+    			txtResult.clear();
+    			txtResult.appendText("Selezionare un mese!\n");
+    			return;
+    		}
+    		String s =this.model.creaGrafo(cmbMese.getValue().getNumero(), Integer.parseInt(txtMinuti.getText()));
+        	cmbM1.getItems().addAll(this.model.getVertici());
+        	cmbM2.getItems().addAll(this.model.getVertici());
+        	txtResult.clear();
+        	txtResult.appendText(s);
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.clear();
+    		txtResult.appendText("Inserire un numero MIN valido!\n");
+    	}
+    	
+    	
+    	
     }
 
     @FXML
     void doCollegamento(ActionEvent event) {
+    	
+    	try {
+    		
+    		if(cmbM2.getValue()==null) {
+    			txtResult.clear();
+    			txtResult.appendText("Selezionare un match M2!\nSe non visualizzati, allora crare prima il grafo!\n");
+    			return;
+    		}
+    		String s= this.model.cercaPercorsoMax(cmbM1.getValue(), cmbM2.getValue());
+        	txtResult.clear();
+        	txtResult.appendText(model.getPesoOttimo()+"\n");
+        	txtResult.appendText(s);
+    		
+    	}catch (NullPointerException e) {
+    		txtResult.clear();
+    		txtResult.appendText("Selezionare un match M1!\nSe non visualizzati, allora crare prima il grafo!\n");
+			
+		}
+    	
+    	
+    	
     	
     }
 
@@ -79,7 +137,24 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
-  
+    	cmbMese.getItems().clear();
+    	
+    	List<Mese> mesi= new ArrayList<>();
+    	
+    	Mese m1= new Mese("Gennaio", 1); mesi.add(m1);
+    	Mese m2= new Mese("Febbraio", 2); mesi.add(m2); 
+    	Mese m3= new Mese("Marzo", 3); mesi.add(m3);
+    	Mese m4= new Mese("Aprile", 4); mesi.add(m4);
+    	Mese m5= new Mese("Maggio", 5); mesi.add(m5);
+    	Mese m6= new Mese("Giugno", 6); mesi.add(m6);
+    	Mese m7= new Mese("Luglio", 7); mesi.add(m7);
+    	Mese m8= new Mese("Agosto", 8); mesi.add(m8);
+    	Mese m9= new Mese("Settembre", 9); mesi.add(m9);
+    	Mese m10= new Mese("Ottobre", 10); mesi.add(m10);
+    	Mese m11= new Mese("Novembre", 11); mesi.add(m11);
+    	Mese m12= new Mese("Dicembre", 12); mesi.add(m12);
+    	
+    	cmbMese.getItems().addAll(mesi);
     }
     
     
